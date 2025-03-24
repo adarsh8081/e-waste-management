@@ -197,11 +197,6 @@ const Solution: React.FC = () => {
       title: "Manual Dismantling",
       description: "Devices are manually disassembled to extract useful components like PCBs, plastic casings, glass screens, and batteries. Each component is carefully separated for specialized processing.",
       image: Ewaste3
-    },
-    {
-      title: "Mechanical Processing",
-      description: "Remaining parts are shredded into smaller pieces and separated using magnetic separation, eddy current separation, and water/air separation techniques.",
-      image: Ewaste4
     }
   ];
 

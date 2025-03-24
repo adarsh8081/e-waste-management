@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import styled from 'styled-components';
 import './App.css';
 import Home from './components/Home';
 import About from './components/About';
@@ -12,111 +11,47 @@ import Solution from './components/Solution';
 import Loader from './components/Loader';
 import logo from './assets/logo.jpg';
 
-interface NavButtonProps {
-  $isActive: boolean;
-  to: string;
-  children: React.ReactNode;
-}
-
-const Navigation = () => {
+function Navigation() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
-  
+
+  const closeMenu = () => setIsMenuOpen(false);
+
   return (
-    <motion.nav 
-      className="nav-container"
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.5, type: "spring", stiffness: 120 }}
-    >
+    <nav className="navbar">
       <div className="nav-content">
-        <Link to="/" className="logo">
-          <motion.img 
-            src={logo} 
-            alt="E-Waste Management" 
-            className="logo-image"
-            whileHover={{ scale: 1.1 }}
-            transition={{ type: "spring", stiffness: 300 }}
-          />
+        <Link to="/" className="logo-link" onClick={closeMenu}>
+          <img src={logo} alt="E-Waste Management" className="logo" />
         </Link>
-        <StyledNavLinks>
-          {['Home', 'Products', 'Solution', 'About', 'Our Team', 'Contact'].map((item, index) => {
-            const path = item === 'Home' ? '/' : 
-                        item === 'Our Team' ? '/ourteam' : 
-                        `/${item.toLowerCase()}`;
-            return (
-              <motion.div
-                key={item}
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: index * 0.1 }}
-              >
-                <StyledNavButton 
-                  to={path}
-                  $isActive={location.pathname === path}
-                >
-                  {item}
-                </StyledNavButton>
-              </motion.div>
-            );
-          })}
-        </StyledNavLinks>
+        
+        <button className="menu-button" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+          {isMenuOpen ? '✕' : '☰'}
+        </button>
+
+        <div className={`nav-links ${isMenuOpen ? 'active' : ''}`}>
+          <Link to="/" className={location.pathname === '/' ? 'active' : ''} onClick={closeMenu}>
+            Home
+          </Link>
+          <Link to="/products" className={location.pathname === '/products' ? 'active' : ''} onClick={closeMenu}>
+            Products
+          </Link>
+          <Link to="/solution" className={location.pathname === '/solution' ? 'active' : ''} onClick={closeMenu}>
+            Solution
+          </Link>
+          <Link to="/about" className={location.pathname === '/about' ? 'active' : ''} onClick={closeMenu}>
+            About
+          </Link>
+          <Link to="/team" className={location.pathname === '/team' ? 'active' : ''} onClick={closeMenu}>
+            Team
+          </Link>
+          <Link to="/contact" className={location.pathname === '/contact' ? 'active' : ''} onClick={closeMenu}>
+            Contact
+          </Link>
+        </div>
       </div>
-    </motion.nav>
+    </nav>
   );
-};
-
-const StyledNavLinks = styled.div`
-  display: flex;
-  gap: 2rem;
-
-  @media (max-width: 768px) {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 1rem;
-  }
-`;
-
-const StyledNavButton = styled(Link)<{ $isActive: boolean }>`
-  --primary: ${props => props.$isActive ? '#555555' : '#CDC9C3'};
-  font-size: 16px;
-  padding: 0.6em 1.5em;
-  letter-spacing: 0.08em;
-  position: relative;
-  font-family: inherit;
-  border-radius: 0.6em;
-  overflow: hidden;
-  transition: all 0.3s;
-  line-height: 1.4em;
-  border: 2px solid var(--primary);
-  background: ${props => props.$isActive 
-    ? 'linear-gradient(to right, rgba(85, 85, 85, 0.2) 1%, rgba(85, 85, 85, 0.1) 40%, rgba(85, 85, 85, 0.1) 60%, rgba(85, 85, 85, 0.2) 100%)'
-    : 'linear-gradient(to right, rgba(205, 201, 195, 0.1) 1%, transparent 40%, transparent 60%, rgba(205, 201, 195, 0.1) 100%)'};
-  color: var(--primary);
-  box-shadow: inset 0 0 10px rgba(85, 85, 85, 0.4), 0 0 9px 3px rgba(85, 85, 85, 0.1);
-  text-decoration: none;
-  font-weight: 500;
-
-  &:hover {
-    color: #555555;
-    box-shadow: inset 0 0 10px rgba(85, 85, 85, 0.6), 0 0 9px 3px rgba(85, 85, 85, 0.2);
-    transform: translateY(-2px);
-  }
-
-  &:before {
-    content: "";
-    position: absolute;
-    left: -4em;
-    width: 4em;
-    height: 100%;
-    top: 0;
-    transition: transform .4s ease-in-out;
-    background: linear-gradient(to right, transparent 1%, rgba(85, 85, 85, 0.1) 40%, rgba(85, 85, 85, 0.1) 60%, transparent 100%);
-  }
-
-  &:hover:before {
-    transform: translateX(15em);
-  }
-`;
+}
 
 function App() {
   const location = useLocation();
@@ -125,49 +60,38 @@ function App() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 3000);
+    }, 2000);
 
     return () => clearTimeout(timer);
   }, []);
 
   if (loading) {
-    return (
-      <div className="App" style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        minHeight: '100vh',
-        background: 'radial-gradient(circle at top center, rgba(217, 228, 221, 0.15) 0%, rgba(85, 85, 85, 0.5) 50%, rgba(85, 85, 85, 0.8) 100%)'
-      }}>
-        <Loader />
-      </div>
-    );
+    return <Loader />;
   }
 
   return (
-    <div className="App" style={{
-      background: '#FBF7F0',
-      minHeight: '100vh'
-    }}>
+    <div className="App">
       <Navigation />
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={location.pathname}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.3 }}
-        >
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/products" element={<Products />} />
-            <Route path="/solution" element={<Solution />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/ourteam" element={<Team />} />
-            <Route path="/contact" element={<Contact />} />
-          </Routes>
-        </motion.div>
-      </AnimatePresence>
+      <main className="main-content">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/products" element={<Products />} />
+              <Route path="/solution" element={<Solution />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/team" element={<Team />} />
+              <Route path="/contact" element={<Contact />} />
+            </Routes>
+          </motion.div>
+        </AnimatePresence>
+      </main>
     </div>
   );
 }

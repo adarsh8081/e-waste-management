@@ -24,6 +24,17 @@ const Loader = () => {
 }
 
 const StyledWrapper = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #FBF7F0;
+  z-index: 9999;
+
   .pl {
     box-shadow: 2em 0 2em rgba(0, 0, 0, 0.2) inset, -2em 0 2em rgba(255, 255, 255, 0.1) inset;
     display: flex;
@@ -35,7 +46,7 @@ const StyledWrapper = styled.div`
     transform: rotateX(30deg) rotateZ(45deg);
     width: 14em;
     height: 14em;
-    color: white;
+    color: #555555;
   }
 
   .pl, .pl__dot {

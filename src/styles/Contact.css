@@ -71,7 +71,7 @@ input:focus, textarea:focus {
   display: flex;
   align-items: center;
   margin-bottom: 1.5rem;
-  color: #e2e2e2;
+  color: #000000;
 }
 
 .info-item i {
