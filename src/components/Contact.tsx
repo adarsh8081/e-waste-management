@@ -25,15 +25,15 @@ const Contact: React.FC = () => {
           <h2>Get in Touch</h2>
           <div className="info-item">
             <i className="fas fa-map-marker-alt"></i>
-            <p>123 E-Waste Street, Green City, 12345</p>
+            <p>GLA UNIVERSITY , MATHURA 281406</p>
           </div>
           <div className="info-item">
             <i className="fas fa-phone"></i>
-            <p>+1 (555) 123-4567</p>
+            <p>+91 9005609660 </p>
           </div>
           <div className="info-item">
             <i className="fas fa-envelope"></i>
-            <p>info@ewaste-management.com</p>
+            <p>Adarsh.kumar_cs.aiml21@gla.ac.in</p>
           </div>
         </div>
       </div>

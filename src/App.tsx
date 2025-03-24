@@ -8,6 +8,7 @@ import About from './components/About';
 import Products from './components/Products';
 import Contact from './components/Contact';
 import Team from './components/Team';
+import Solution from './components/Solution';
 import Loader from './components/Loader';
 import logo from './assets/logo.jpg';
 
@@ -38,7 +39,7 @@ const Navigation = () => {
           />
         </Link>
         <StyledNavLinks>
-          {['Home', 'Products', 'About', 'Our Team', 'Contact'].map((item, index) => {
+          {['Home', 'Products', 'Solution', 'About', 'Our Team', 'Contact'].map((item, index) => {
             const path = item === 'Home' ? '/' : 
                         item === 'Our Team' ? '/ourteam' : 
                         `/${item.toLowerCase()}`;
@@ -76,7 +77,7 @@ const StyledNavLinks = styled.div`
 `;
 
 const StyledNavButton = styled(Link)<{ $isActive: boolean }>`
-  --purple: ${props => props.$isActive ? '#915EFF' : '#AE67FA'};
+  --primary: ${props => props.$isActive ? '#555555' : '#CDC9C3'};
   font-size: 16px;
   padding: 0.6em 1.5em;
   letter-spacing: 0.08em;
@@ -86,18 +87,18 @@ const StyledNavButton = styled(Link)<{ $isActive: boolean }>`
   overflow: hidden;
   transition: all 0.3s;
   line-height: 1.4em;
-  border: 2px solid var(--purple);
+  border: 2px solid var(--primary);
   background: ${props => props.$isActive 
-    ? 'linear-gradient(to right, rgba(145, 94, 255, 0.2) 1%, rgba(145, 94, 255, 0.1) 40%, rgba(145, 94, 255, 0.1) 60%, rgba(145, 94, 255, 0.2) 100%)'
-    : 'linear-gradient(to right, rgba(174, 103, 250, 0.1) 1%, transparent 40%, transparent 60%, rgba(174, 103, 250, 0.1) 100%)'};
-  color: var(--purple);
-  box-shadow: inset 0 0 10px rgba(145, 94, 255, 0.4), 0 0 9px 3px rgba(145, 94, 255, 0.1);
+    ? 'linear-gradient(to right, rgba(85, 85, 85, 0.2) 1%, rgba(85, 85, 85, 0.1) 40%, rgba(85, 85, 85, 0.1) 60%, rgba(85, 85, 85, 0.2) 100%)'
+    : 'linear-gradient(to right, rgba(205, 201, 195, 0.1) 1%, transparent 40%, transparent 60%, rgba(205, 201, 195, 0.1) 100%)'};
+  color: var(--primary);
+  box-shadow: inset 0 0 10px rgba(85, 85, 85, 0.4), 0 0 9px 3px rgba(85, 85, 85, 0.1);
   text-decoration: none;
   font-weight: 500;
 
   &:hover {
-    color: #915EFF;
-    box-shadow: inset 0 0 10px rgba(145, 94, 255, 0.6), 0 0 9px 3px rgba(145, 94, 255, 0.2);
+    color: #555555;
+    box-shadow: inset 0 0 10px rgba(85, 85, 85, 0.6), 0 0 9px 3px rgba(85, 85, 85, 0.2);
     transform: translateY(-2px);
   }
 
@@ -109,7 +110,7 @@ const StyledNavButton = styled(Link)<{ $isActive: boolean }>`
     height: 100%;
     top: 0;
     transition: transform .4s ease-in-out;
-    background: linear-gradient(to right, transparent 1%, rgba(145, 94, 255, 0.1) 40%, rgba(145, 94, 255, 0.1) 60%, transparent 100%);
+    background: linear-gradient(to right, transparent 1%, rgba(85, 85, 85, 0.1) 40%, rgba(85, 85, 85, 0.1) 60%, transparent 100%);
   }
 
   &:hover:before {
@@ -136,7 +137,7 @@ function App() {
         justifyContent: 'center', 
         alignItems: 'center', 
         minHeight: '100vh',
-        background: 'radial-gradient(circle at top center, rgba(145, 94, 255, 0.15) 0%, rgba(21, 12, 38, 1) 50%, rgba(10, 7, 18, 1) 100%)'
+        background: 'radial-gradient(circle at top center, rgba(217, 228, 221, 0.15) 0%, rgba(85, 85, 85, 0.5) 50%, rgba(85, 85, 85, 0.8) 100%)'
       }}>
         <Loader />
       </div>
@@ -144,7 +145,10 @@ function App() {
   }
 
   return (
-    <div className="App">
+    <div className="App" style={{
+      background: '#FBF7F0',
+      minHeight: '100vh'
+    }}>
       <Navigation />
       <AnimatePresence mode="wait">
         <motion.div
@@ -157,6 +161,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/products" element={<Products />} />
+            <Route path="/solution" element={<Solution />} />
             <Route path="/about" element={<About />} />
             <Route path="/ourteam" element={<Team />} />
             <Route path="/contact" element={<Contact />} />
