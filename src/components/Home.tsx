@@ -65,6 +65,10 @@ const StatsSection = styled.div`
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 2rem;
   margin-bottom: 6rem;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 2rem;
 `;
 
 const StatCard = styled(motion.div)`
@@ -813,43 +817,41 @@ const Home: React.FC = () => {
         </ScrollIndicator>
       </HeroSection>
 
-      <StatsSection id="stats-section">
-        <StatsGrid>
-          {[
-            {
-              number: "50M+",
-              title: "Tons of E-Waste",
-              description: "Annual global electronic waste generation, with only 20% being properly recycled."
-            },
-            {
-              number: "80%",
-              title: "Recyclable Materials",
-              description: "Most electronic devices contain valuable materials that can be recovered and reused."
-            },
-            {
-              number: "$62.5B",
-              title: "Economic Value",
-              description: "The estimated value of raw materials in global e-waste annually."
-            },
-            {
-              number: "40%",
-              title: "Carbon Reduction",
-              description: "Potential reduction in carbon emissions through proper e-waste recycling."
-            }
-          ].map((stat, index) => (
-            <StatsCardEnhanced
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              viewport={{ once: true }}
-            >
-              <StatNumber>{stat.number}</StatNumber>
-              <StatTitle>{stat.title}</StatTitle>
-              <StatDescription>{stat.description}</StatDescription>
-            </StatsCardEnhanced>
-          ))}
-        </StatsGrid>
+      <StatsSection>
+        {[
+          {
+            number: "62M",
+            title: "Tonnes of E-Waste",
+            description: "Annual global electronic waste generation in 2022, equivalent to 107,000 large aircraft"
+          },
+          {
+            number: "$91B",
+            title: "Economic Value",
+            description: "Value of metals embedded in 2022 e-waste, including copper, gold, and iron"
+          },
+          {
+            number: "22.3%",
+            title: "Recycling Rate",
+            description: "Only this much of global e-waste was documented as properly collected and recycled"
+          },
+          {
+            number: "82M",
+            title: "Future Impact",
+            description: "Projected tonnes of e-waste by 2030, showing a concerning 33% increase"
+          }
+        ].map((stat, index) => (
+          <StatsCardEnhanced
+            key={index}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: index * 0.1 }}
+            viewport={{ once: true }}
+          >
+            <StatNumber>{stat.number}</StatNumber>
+            <StatTitle>{stat.title}</StatTitle>
+            <StatDescription>{stat.description}</StatDescription>
+          </StatsCardEnhanced>
+        ))}
       </StatsSection>
 
       <FeaturesSection>
