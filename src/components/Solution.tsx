@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, Suspense } from 'react';
+import React, { useState, useEffect, useRef, Suspense, FC } from 'react';
 import styled from 'styled-components';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { Canvas } from '@react-three/fiber';
@@ -10,11 +10,14 @@ import {
   Tooltip,
   Legend,
   CategoryScale,
-  LinearScale
+  LinearScale,
+  ChartOptions,
+  ChartData
 } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
 import CountUp from 'react-countup';
 import { MapContainer, TileLayer, Circle, Popup } from 'react-leaflet';
+import { LatLngTuple } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import E1 from '../assets/E1.png';
 import E2 from '../assets/E2.png';
@@ -25,6 +28,10 @@ import Ewaste4 from '../assets/Ewaste4.png';
 
 // Register ChartJS components
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale);
+
+// Map constants
+const MAP_CENTER: LatLngTuple = [20, 0];
+const MAP_ZOOM = 2;
 
 const SolutionContainer = styled.div`
   padding: 2rem;
@@ -507,19 +514,37 @@ const ImpactScore = styled.div`
 `;
 
 // Simple 3D Model Component
-const EwasteModel = () => {
+const EwasteModel: FC = () => {
   const meshRef = useRef<THREE.Mesh>(null);
 
   useEffect(() => {
-    if (meshRef.current) {
-      meshRef.current.rotation.x = 0.5;
-    }
+    if (!meshRef.current) return;
+
+    const animate = () => {
+      if (!meshRef.current) return;
+      meshRef.current.rotation.x += 0.01;
+      meshRef.current.rotation.y += 0.01;
+      requestAnimationFrame(animate);
+    };
+
+    animate();
+
+    return () => {
+      if (meshRef.current) {
+        meshRef.current.rotation.x = 0;
+        meshRef.current.rotation.y = 0;
+      }
+    };
   }, []);
 
   return (
     <mesh ref={meshRef}>
-      <boxGeometry args={[2, 2, 2]} />
-      <meshStandardMaterial color="#00ff87" />
+      <boxGeometry args={[2, 2, 2, 1, 1, 1]} />
+      <meshStandardMaterial
+        color="#00ff87"
+        roughness={0.3}
+        metalness={0.7}
+      />
     </mesh>
   );
 };
@@ -528,7 +553,71 @@ interface RecyclingLocation {
   lat: number;
   lng: number;
   impact: number;
+  deviceCount: number;
+  materialsRecovered: {
+    metals: number;
+    plastics: number;
+    glass: number;
+  };
+  facilityType: 'Collection Center' | 'Processing Plant' | 'Recycling Facility';
+  co2Saved: number;
 }
+
+// Add predefined e-waste processing centers
+const INITIAL_PROCESSING_CENTERS: RecyclingLocation[] = [
+  {
+    lat: 40.7128,
+    lng: -74.0060,
+    impact: 8500,
+    deviceCount: 25000,
+    materialsRecovered: {
+      metals: 12500,
+      plastics: 8000,
+      glass: 4500
+    },
+    facilityType: 'Processing Plant',
+    co2Saved: 15000
+  },
+  {
+    lat: 51.5074,
+    lng: -0.1278,
+    impact: 7800,
+    deviceCount: 22000,
+    materialsRecovered: {
+      metals: 11000,
+      plastics: 7000,
+      glass: 4000
+    },
+    facilityType: 'Recycling Facility',
+    co2Saved: 13500
+  },
+  {
+    lat: 35.6762,
+    lng: 139.6503,
+    impact: 9200,
+    deviceCount: 28000,
+    materialsRecovered: {
+      metals: 14000,
+      plastics: 9000,
+      glass: 5000
+    },
+    facilityType: 'Processing Plant',
+    co2Saved: 17000
+  },
+  {
+    lat: 28.6139,
+    lng: 77.2090,
+    impact: 6500,
+    deviceCount: 19000,
+    materialsRecovered: {
+      metals: 9500,
+      plastics: 6000,
+      glass: 3500
+    },
+    facilityType: 'Collection Center',
+    co2Saved: 11000
+  }
+];
 
 const Solution: React.FC = () => {
   const containerRef = useRef(null);
@@ -536,33 +625,30 @@ const Solution: React.FC = () => {
   const [activeSection, setActiveSection] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [userImpact, setUserImpact] = useState(0);
-  const [recyclingLocations, setRecyclingLocations] = useState<RecyclingLocation[]>([]);
+  const [recyclingLocations, setRecyclingLocations] = useState<RecyclingLocation[]>(INITIAL_PROCESSING_CENTERS);
   const [achievements, setAchievements] = useState<string[]>([]);
 
   useEffect(() => {
-    // Simulate real-time global e-waste processing
-    const interval = setInterval(() => {
-      setEwasteCount(prev => {
-        const newCount = prev + Math.floor(Math.random() * 5);
-        if (newCount > 10000) return 0;
-        return newCount;
-      });
-    }, 100);
+    try {
+      // Simulate real-time e-waste processing with realistic data
+      const interval = setInterval(() => {
+        setRecyclingLocations(prev => prev.map(location => ({
+          ...location,
+          deviceCount: location.deviceCount + Math.floor(Math.random() * 10),
+          impact: location.impact + Math.floor(Math.random() * 5),
+          co2Saved: location.co2Saved + Math.floor(Math.random() * 100),
+          materialsRecovered: {
+            metals: location.materialsRecovered.metals + Math.floor(Math.random() * 5),
+            plastics: location.materialsRecovered.plastics + Math.floor(Math.random() * 3),
+            glass: location.materialsRecovered.glass + Math.floor(Math.random() * 2)
+          }
+        })));
+      }, 5000);
 
-    // Simulate global recycling locations
-    const locationInterval = setInterval(() => {
-      const newLocation: RecyclingLocation = {
-        lat: Math.random() * 180 - 90,
-        lng: Math.random() * 360 - 180,
-        impact: Math.floor(Math.random() * 1000)
-      };
-      setRecyclingLocations(prev => [...prev.slice(-20), newLocation]);
-    }, 5000);
-
-    return () => {
-      clearInterval(interval);
-      clearInterval(locationInterval);
-    };
+      return () => clearInterval(interval);
+    } catch (error) {
+      console.error('Error in data simulation:', error);
+    }
   }, []);
 
   const chartData = {
@@ -662,7 +748,7 @@ const Solution: React.FC = () => {
           </HeroSubtitle>
           <ImpactScore>
             <CountUp end={userImpact} duration={2} separator="," />
-            <span style={{ fontSize: '1.5rem' }}> Impact Points</span>
+            <div style={{ fontSize: '1.5rem' }}> Impact Points</div>
           </ImpactScore>
           <ActionButton
             whileHover={{ scale: 1.05 }}
@@ -675,37 +761,99 @@ const Solution: React.FC = () => {
       </HeroSection>
 
       <Section>
-        <SectionTitle>Live Global Impact</SectionTitle>
+        <SectionTitle>Global E-Waste Processing Network</SectionTitle>
+        <Description style={{ marginBottom: '2rem', textAlign: 'center' }}>
+          Track real-time e-waste processing across our global network of recycling facilities. 
+          Each center specializes in sustainable electronics recycling, material recovery, and 
+          environmental impact reduction. Watch as we transform electronic waste into valuable 
+          resources while reducing our carbon footprint.
+        </Description>
         <MapWrapper>
-          <MapContainer center={[0, 0]} zoom={2} style={{ height: '100%', width: '100%' }}>
-            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+          <MapContainer 
+            center={MAP_CENTER} 
+            zoom={MAP_ZOOM} 
+            style={{ height: '100%', width: '100%' }}
+            scrollWheelZoom={false}
+          >
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
             {recyclingLocations.map((location, index) => (
               <Circle
-                key={index}
-                center={[location.lat, location.lng]}
-                radius={50000}
-                pathOptions={{ color: '#00ff87', fillColor: '#00ff87' }}
+                key={`${location.lat}-${location.lng}-${index}`}
+                center={[location.lat, location.lng] as LatLngTuple}
+                radius={75000}
+                pathOptions={{
+                  color: location.facilityType === 'Processing Plant' ? '#00ff87' :
+                         location.facilityType === 'Recycling Facility' ? '#60efff' : '#ffd700',
+                  fillColor: location.facilityType === 'Processing Plant' ? '#00ff87' :
+                            location.facilityType === 'Recycling Facility' ? '#60efff' : '#ffd700',
+                  fillOpacity: 0.6
+                }}
               >
                 <Popup>
-                  Impact: {location.impact} devices processed
+                  <div style={{ padding: '10px' }}>
+                    <h3 style={{ color: '#333', marginBottom: '10px' }}>{location.facilityType}</h3>
+                    <div style={{ marginBottom: '5px' }}>
+                      <strong>Devices Processed:</strong> {location.deviceCount.toLocaleString()}
+                    </div>
+                    <div style={{ marginBottom: '5px' }}>
+                      <strong>Materials Recovered (kg):</strong>
+                      <ul style={{ marginTop: '5px' }}>
+                        <li>Metals: {location.materialsRecovered.metals.toLocaleString()}</li>
+                        <li>Plastics: {location.materialsRecovered.plastics.toLocaleString()}</li>
+                        <li>Glass: {location.materialsRecovered.glass.toLocaleString()}</li>
+                      </ul>
+                    </div>
+                    <div style={{ marginBottom: '5px' }}>
+                      <strong>CO₂ Saved (kg):</strong> {location.co2Saved.toLocaleString()}
+                    </div>
+                    <div style={{ fontSize: '0.9em', color: '#666', marginTop: '10px' }}>
+                      Location: [{location.lat.toFixed(4)}, {location.lng.toFixed(4)}]
+                    </div>
+                  </div>
                 </Popup>
               </Circle>
             ))}
           </MapContainer>
         </MapWrapper>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginTop: '20px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <div style={{ width: '20px', height: '20px', backgroundColor: '#00ff87', borderRadius: '50%' }}></div>
+            <span>Processing Plant</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <div style={{ width: '20px', height: '20px', backgroundColor: '#60efff', borderRadius: '50%' }}></div>
+            <span>Recycling Facility</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <div style={{ width: '20px', height: '20px', backgroundColor: '#ffd700', borderRadius: '50%' }}></div>
+            <span>Collection Center</span>
+          </div>
+        </div>
       </Section>
 
       <Section>
         <SectionTitle>Interactive E-Waste Visualization</SectionTitle>
         <Canvas3DContainer>
-          <Canvas camera={{ position: [0, 0, 5] }}>
-            <ambientLight intensity={0.5} />
-            <pointLight position={[10, 10, 10]} />
-            <Suspense fallback={null}>
-              <EwasteModel />
-            </Suspense>
-            <OrbitControls />
-          </Canvas>
+          <ErrorBoundary fallback={<div>Error loading 3D visualization</div>}>
+            <Canvas
+              camera={{ position: [0, 0, 5], fov: 75 }}
+              style={{ background: '#1a1a1a' }}
+            >
+              <ambientLight intensity={0.5} />
+              <pointLight position={[10, 10, 10]} intensity={1.5} />
+              <Suspense fallback={null}>
+                <EwasteModel />
+              </Suspense>
+              <OrbitControls
+                enablePan={false}
+                maxDistance={10}
+                minDistance={2}
+              />
+            </Canvas>
+          </ErrorBoundary>
         </Canvas3DContainer>
       </Section>
 
@@ -790,4 +938,31 @@ const Solution: React.FC = () => {
   );
 };
 
-export default Solution; 
+// Error Boundary Component
+class ErrorBoundary extends React.Component<
+  { children: React.ReactNode; fallback: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode; fallback: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('Error in component:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback;
+    }
+
+    return this.props.children;
+  }
+}
+
+export default Solution;

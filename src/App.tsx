@@ -1,27 +1,51 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import './App.css';
 import Home from './components/Home';
 import About from './components/About';
 import Products from './components/Products';
-import Contact from './pages/Contact';
+import Contact from './components/Contact';
 import Team from './components/Team';
 import Solution from './components/Solution';
 import Loader from './components/Loader';
 import Navbar from './components/Navbar';
+import { createGlobalStyle } from 'styled-components';
 
-function App() {
+const GlobalStyle = createGlobalStyle`
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  }
+
+  body {
+    overflow-x: hidden;
+  }
+
+  :root {
+    --primary-color: #1a2a6c;
+    --secondary-color: #b21f1f;
+    --accent-color: #fdbb2d;
+  }
+`;
+
+const App: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setTimeout(() => {
+    // Simulate initial loading
+    const timer = setTimeout(() => {
       setLoading(false);
     }, 2000);
+
+    return () => clearTimeout(timer);
   }, []);
 
   return (
     <BrowserRouter>
+      <GlobalStyle />
       <div className="App">
         <AnimatePresence mode="wait">
           {loading ? (
@@ -58,6 +82,6 @@ function App() {
       </div>
     </BrowserRouter>
   );
-}
+};
 
 export default App;
