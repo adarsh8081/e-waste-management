@@ -207,7 +207,7 @@ const FloatingParticles = styled.div`
   }
 `;
 
-const Contact: React.FC = () => {
+const Contact = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',

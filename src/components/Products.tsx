@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import '../styles/Products.css';
-import ProductDetails from './ProductDetails';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
+import ProductDetails from './ProductDetails';
 
 // Import all product images
 import earbuds from '../assets/products_images/Earbuds.jpg';
@@ -137,373 +136,113 @@ const products: Product[] = [
   }
 ];
 
-// First, define base components that don't depend on others
-const ProductImage = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+const Container = styled.div`
+  padding: 2rem;
+  background: #1a2a3a;
+  min-height: 100vh;
 `;
 
-const ProductInfo = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 1.5rem;
-  gap: 0.75rem;
-  position: relative;
-  background: rgba(255, 255, 255, 0.9);
-  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+const HeroSection = styled(motion.div)`
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #fff;
+  background: linear-gradient(135deg, rgba(76, 172, 188, 0.1), rgba(160, 217, 149, 0.1));
+  border-radius: 20px;
+  margin-bottom: 4rem;
+`;
+
+const Title = styled.h1`
+  font-size: 3.5rem;
+  color: #4CACBC;
+  margin-bottom: 1.5rem;
+`;
+
+const Subtitle = styled.p`
+  font-size: 1.2rem;
+  color: #A0D995;
+  max-width: 800px;
+  margin: 0 auto;
+`;
+
+const Grid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  padding: 2rem 0;
+`;
+
+const Card = styled(motion.div)`
+  background: rgba(76, 172, 188, 0.1);
+  border-radius: 15px;
+  overflow: hidden;
+  border: 1px solid rgba(76, 172, 188, 0.2);
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
 `;
 
 const ImageContainer = styled.div`
   position: relative;
   width: 100%;
-  height: 250px;
+  height: 200px;
   overflow: hidden;
 
-  &::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(
-      to bottom,
-      transparent 0%,
-      transparent 70%,
-      rgba(255, 255, 255, 0.9) 100%
-    );
-    z-index: 1;
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
   }
+
+  &:hover img {
+    transform: scale(1.1);
+  }
+`;
+
+const CardContent = styled.div`
+  padding: 1.5rem;
+`;
+
+const CardTitle = styled.h3`
+  color: #4CACBC;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+`;
+
+const CardDescription = styled.p`
+  color: #A0D995;
+  font-size: 1rem;
+  line-height: 1.6;
 `;
 
 const CategoryTag = styled.span`
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: rgba(145, 94, 255, 0.9);
-  color: white;
+  background: rgba(160, 217, 149, 0.2);
+  color: #A0D995;
   padding: 0.5rem 1rem;
   border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  z-index: 2;
-  backdrop-filter: blur(4px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-`;
-
-const ProductTitle = styled.h3`
-  font-size: 1.5rem;
-  color: #2D3748;
-  margin: 0;
-  text-align: center;
-  font-weight: 600;
-  line-height: 1.4;
-  position: relative;
-  padding-bottom: 0.75rem;
-
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 40px;
-    height: 3px;
-    background: linear-gradient(90deg, #915EFF, #6B46C1);
-    border-radius: 2px;
-  }
-
-  @media (max-width: 768px) {
-    font-size: 1.3rem;
-  }
-`;
-
-const ProductDescription = styled.p`
-  color: #4A5568;
-  text-align: center;
-  margin: 0;
-  line-height: 1.6;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  font-size: 0.95rem;
-  opacity: 0.9;
-`;
-
-const LearnMoreButton = styled.button`
-  background: transparent;
-  color: #915EFF;
-  border: 2px solid #915EFF;
-  padding: 0.75rem 2rem;
-  border-radius: 25px;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 0.95rem;
-  transition: all 0.3s ease;
-  margin-top: 0.5rem;
-  position: relative;
-  overflow: hidden;
-  z-index: 1;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 0;
-    height: 100%;
-    background: #915EFF;
-    transition: width 0.3s ease;
-    z-index: -1;
-  }
-
-  &:hover {
-    color: white;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(145, 94, 255, 0.25);
-
-    &::before {
-      width: 100%;
-    }
-  }
-
-  &:active {
-    transform: translateY(0);
-  }
-`;
-
-// Then define components that depend on others
-const ProductCard = styled.div`
-  position: relative;
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(10px);
-  border-radius: 24px;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 
-    0 8px 20px rgba(0, 0, 0, 0.08),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.4);
-
-  &:hover {
-    transform: translateY(-8px) scale(1.02);
-    box-shadow: 
-      0 20px 40px rgba(145, 94, 255, 0.2),
-      inset 0 0 0 2px rgba(145, 94, 255, 0.4);
-
-    ${ProductImage} {
-      transform: scale(1.1);
-    }
-
-    ${ProductInfo} {
-      transform: translateY(-4px);
-    }
-  }
-`;
-
-// Keep Hero components at the end since they're independent
-const HeroSection = styled(motion.div)`
-  min-height: 45vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, rgba(145, 94, 255, 0.1) 0%, rgba(107, 70, 193, 0.1) 100%);
-  border-radius: 2.5rem;
-  margin: 2rem 0 4rem;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 
-    0 20px 40px rgba(145, 94, 255, 0.1),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.4);
-  padding: 3rem;
-  backdrop-filter: blur(10px);
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(
-      circle at center,
-      rgba(145, 94, 255, 0.1) 0%,
-      transparent 50%
-    );
-    animation: rotate 20s linear infinite;
-  }
-
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      45deg,
-      transparent 0%,
-      rgba(255, 255, 255, 0.1) 100%
-    );
-    z-index: 1;
-  }
-
-  @keyframes rotate {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
-  
-  @media (max-width: 768px) {
-    min-height: 40vh;
-    margin: 1.5rem 0 3rem;
-    border-radius: 2rem;
-    padding: 2rem;
-  }
-
-  @media (max-width: 480px) {
-    min-height: 35vh;
-    margin: 1rem 0 2rem;
-    border-radius: 1.5rem;
-    padding: 1.5rem;
-  }
-`;
-
-const HeroContent = styled.div`
-  text-align: center;
-  z-index: 2;
-  max-width: 800px;
-  padding: 0 1rem;
-  position: relative;
-
-  &::before,
-  &::after {
-    content: '';
-    position: absolute;
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    background: linear-gradient(45deg, #915EFF, #6B46C1);
-    opacity: 0.1;
-    filter: blur(40px);
-    z-index: -1;
-  }
-
-  &::before {
-    top: -50px;
-    left: -100px;
-  }
-
-  &::after {
-    bottom: -50px;
-    right: -100px;
-  }
-`;
-
-const HeroTitle = styled(motion.h1)`
-  font-size: 4rem;
-  margin-bottom: 1.5rem;
-  background: linear-gradient(45deg, #915EFF, #6B46C1);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  position: relative;
+  font-size: 0.9rem;
   display: inline-block;
-
-  &::before {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100px;
-    height: 4px;
-    background: linear-gradient(90deg, #915EFF, #6B46C1);
-    border-radius: 2px;
-  }
-
-  @media (max-width: 1024px) {
-    font-size: 3.5rem;
-  }
-
-  @media (max-width: 768px) {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 2.5rem;
-    margin-bottom: 0.75rem;
-  }
+  margin-bottom: 1rem;
 `;
 
-const HeroSubtitle = styled(motion.p)`
-  font-size: 1.25rem;
-  color: #4A5568;
-  line-height: 1.8;
-  font-weight: 500;
-  max-width: 700px;
-  margin: 0 auto;
-  position: relative;
-  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+const LearnMoreButton = styled(motion.button)`
+  background: linear-gradient(45deg, #4CACBC, #A0D995);
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 25px;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 1rem;
+  transition: transform 0.3s ease;
 
-  @media (max-width: 768px) {
-    font-size: 1.1rem;
-    line-height: 1.6;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 1rem;
+  &:hover {
+    transform: translateY(-2px);
   }
 `;
-
-// Add animation variants for the hero content
-const heroVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { 
-    opacity: 1, 
-    y: 0,
-    transition: {
-      duration: 0.8,
-      ease: "easeOut"
-    }
-  }
-};
-
-const titleVariants = {
-  hidden: { opacity: 0, y: -20 },
-  visible: { 
-    opacity: 1, 
-    y: 0,
-    transition: {
-      duration: 0.6,
-      ease: "easeOut"
-    }
-  }
-};
-
-const subtitleVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { 
-    opacity: 1, 
-    y: 0,
-    transition: {
-      duration: 0.6,
-      delay: 0.2,
-      ease: "easeOut"
-    }
-  }
-};
 
 const Products: React.FC = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -517,49 +256,54 @@ const Products: React.FC = () => {
   };
 
   return (
-    <div className="products-container">
+    <Container>
       <HeroSection
-        initial="hidden"
-        animate="visible"
-        variants={heroVariants}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
       >
-        <HeroContent>
-          <HeroTitle variants={titleVariants}>
-            Common E-Waste Products
-          </HeroTitle>
-          <HeroSubtitle variants={subtitleVariants}>
-            Learn about the electronic devices that are commonly discarded and
-            their environmental impact. These products contain hazardous
-            materials that require proper disposal and recycling.
-          </HeroSubtitle>
-        </HeroContent>
+        <Title>Common E-Waste Products</Title>
+        <Subtitle>
+          Learn about the electronic devices that are commonly discarded and
+          their environmental impact. These products contain hazardous
+          materials that require proper disposal and recycling.
+        </Subtitle>
       </HeroSection>
-      <div className="products-grid">
+
+      <Grid>
         {products.map((product) => (
-          <ProductCard key={product.id}>
-            <CategoryTag>{product.category}</CategoryTag>
+          <Card
+            key={product.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
             <ImageContainer>
-              <ProductImage src={product.image} alt={product.name} />
+              <img src={product.image} alt={product.name} />
             </ImageContainer>
-            <ProductInfo>
-              <ProductTitle>{product.name}</ProductTitle>
-              <ProductDescription>
-                {product.description}
-              </ProductDescription>
-              <LearnMoreButton onClick={() => handleLearnMore(product)}>
+            <CardContent>
+              <CategoryTag>{product.category}</CategoryTag>
+              <CardTitle>{product.name}</CardTitle>
+              <CardDescription>{product.description}</CardDescription>
+              <LearnMoreButton
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => handleLearnMore(product)}
+              >
                 Learn More
               </LearnMoreButton>
-            </ProductInfo>
-          </ProductCard>
+            </CardContent>
+          </Card>
         ))}
-      </div>
+      </Grid>
+
       {selectedProduct && (
-        <ProductDetails 
-          product={selectedProduct} 
+        <ProductDetails
+          product={selectedProduct}
           onClose={handleCloseModal}
         />
       )}
-    </div>
+    </Container>
   );
 };
 

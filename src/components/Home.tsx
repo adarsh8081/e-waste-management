@@ -204,7 +204,7 @@ const StyledLink = styled(Link)`
   color: inherit;
 `;
 
-const Home: React.FC = () => {
+const Home = () => {
   return (
     <HomeContainer>
       <HeroSection>
@@ -234,14 +234,6 @@ const Home: React.FC = () => {
                 whileTap={{ scale: 0.95 }}
               >
                 Discover Our Solutions
-              </ActionButton>
-            </StyledLink>
-            <StyledLink to="/contact">
-              <ActionButton
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Get Involved
               </ActionButton>
             </StyledLink>
           </motion.div>

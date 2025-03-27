@@ -101,7 +101,7 @@ const Card = styled(motion.div)`
   }
 `;
 
-const About: React.FC = () => {
+const About = () => {
   return (
     <AboutContainer>
       <HeroSection>

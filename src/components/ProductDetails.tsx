@@ -1,14 +1,18 @@
 import React from 'react';
+import styled from 'styled-components';
+import { motion } from 'framer-motion';
 import '../styles/ProductDetails.css';
 
+interface Product {
+  id: number;
+  name: string;
+  description: string;
+  image: string;
+  category: string;
+}
+
 interface ProductDetailsProps {
-  product: {
-    id: number;
-    name: string;
-    description: string;
-    image: string;
-    category: string;
-  } | null;
+  product: Product;
   onClose: () => void;
 }
 
@@ -42,72 +46,159 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onClose }) => 
   };
 
   return (
-    <div className="product-details-overlay" onClick={onClose}>
-      <div className="product-details-modal" onClick={e => e.stopPropagation()}>
-        <button className="close-button" onClick={onClose}>&times;</button>
-        <div className="product-details-content">
-          <div className="product-details-image">
-            <img src={product.image} alt={product.name} />
+    <ModalOverlay
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onClick={onClose}
+    >
+      <ModalContent
+        onClick={e => e.stopPropagation()}
+        initial={{ y: 50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        exit={{ y: 50, opacity: 0 }}
+      >
+        <CloseButton onClick={onClose}>&times;</CloseButton>
+        <ProductImage>
+          <img
+            src={product.image}
+            alt={product.name}
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          />
+        </ProductImage>
+        <ContentContainer>
+          <CategoryTag>{product.category}</CategoryTag>
+          <Title>{product.name}</Title>
+          <Description>{product.description}</Description>
+          
+          <h3>Environmental Hazards</h3>
+          <p>{getDetailedDescription(product.category)}</p>
+          
+          <h3>Proper Disposal Importance</h3>
+          <p>{getEnvironmentalImpact(product.category)}</p>
+          
+          <div className="eco-features">
+            <h3>Common Harmful Components</h3>
+            <ul>
+              {product.category === "Batteries" && (
+                <>
+                  <li>Lead and acid electrolytes</li>
+                  <li>Cadmium and nickel</li>
+                  <li>Lithium compounds</li>
+                  <li>Corrosive materials</li>
+                  <li>Heavy metals</li>
+                </>
+              )}
+              {product.category === "Lighting" && (
+                <>
+                  <li>Mercury vapor</li>
+                  <li>Lead in glass components</li>
+                  <li>Phosphor coating</li>
+                  <li>Electronic ballasts</li>
+                  <li>Metal end caps</li>
+                </>
+              )}
+              {product.category === "Industrial" && (
+                <>
+                  <li>Industrial-grade capacitors</li>
+                  <li>Heavy-duty transformers</li>
+                  <li>Industrial coolants</li>
+                  <li>High-voltage components</li>
+                  <li>Industrial-grade plastics</li>
+                </>
+              )}
+              {(product.category === "Electronics" || product.category === "Audio" || product.category === "Wearables" || product.category === "Appliances") && (
+                <>
+                  <li>Toxic metals (lead, mercury, cadmium)</li>
+                  <li>Non-biodegradable plastics</li>
+                  <li>Hazardous circuit boards</li>
+                  <li>Chemical flame retardants</li>
+                  <li>Lithium batteries</li>
+                </>
+              )}
+            </ul>
           </div>
-          <div className="product-details-info">
-            <h2>{product.name}</h2>
-            <span className="category-tag">{product.category}</span>
-            
-            <h3>Environmental Hazards</h3>
-            <p>{product.description}</p>
-            
-            <h3>Detailed Impact</h3>
-            <p>{getDetailedDescription(product.category)}</p>
-            
-            <h3>Proper Disposal Importance</h3>
-            <p>{getEnvironmentalImpact(product.category)}</p>
-            
-            <div className="eco-features">
-              <h3>Common Harmful Components</h3>
-              <ul>
-                {product.category === "Batteries" && (
-                  <>
-                    <li>Lead and acid electrolytes</li>
-                    <li>Cadmium and nickel</li>
-                    <li>Lithium compounds</li>
-                    <li>Corrosive materials</li>
-                    <li>Heavy metals</li>
-                  </>
-                )}
-                {product.category === "Lighting" && (
-                  <>
-                    <li>Mercury vapor</li>
-                    <li>Lead in glass components</li>
-                    <li>Phosphor coating</li>
-                    <li>Electronic ballasts</li>
-                    <li>Metal end caps</li>
-                  </>
-                )}
-                {product.category === "Industrial" && (
-                  <>
-                    <li>Industrial-grade capacitors</li>
-                    <li>Heavy-duty transformers</li>
-                    <li>Industrial coolants</li>
-                    <li>High-voltage components</li>
-                    <li>Industrial-grade plastics</li>
-                  </>
-                )}
-                {(product.category === "Electronics" || product.category === "Audio" || product.category === "Wearables" || product.category === "Appliances") && (
-                  <>
-                    <li>Toxic metals (lead, mercury, cadmium)</li>
-                    <li>Non-biodegradable plastics</li>
-                    <li>Hazardous circuit boards</li>
-                    <li>Chemical flame retardants</li>
-                    <li>Lithium batteries</li>
-                  </>
-                )}
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+        </ContentContainer>
+      </ModalContent>
+    </ModalOverlay>
   );
 };
+
+const ModalOverlay = styled(motion.div)`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+`;
+
+const ModalContent = styled(motion.div)`
+  background: white;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 600px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+`;
+
+const ProductImage = styled.div`
+  position: relative;
+  width: 100%;
+  height: 300px;
+`;
+
+const ContentContainer = styled.div`
+  padding: 2rem;
+`;
+
+const Title = styled.h2`
+  font-size: 2rem;
+  color: #2D3748;
+  margin-bottom: 1rem;
+`;
+
+const Description = styled.p`
+  font-size: 1.1rem;
+  color: #4A5568;
+  line-height: 1.6;
+`;
+
+const CategoryTag = styled.span`
+  display: inline-block;
+  background: #915EFF;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+`;
+
+const CloseButton = styled.button`
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  
+  &:hover {
+    background: white;
+  }
+`;
 
 export default ProductDetails; 

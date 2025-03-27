@@ -1,37 +1,65 @@
 import React, { useEffect } from 'react';
+import styled from 'styled-components';
 import '../styles/Team.css';
-import placeholderImage from '../assets/logo.jpg';
+
+type TeamMember = {
+  id: number;
+  name: string;
+  role: string;
+  image: string;
+  bio: string;
+};
+
+const MemberImage = styled.div`
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-bottom: 1rem;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+`;
 
 const Team: React.FC = () => {
   useEffect(() => {
     console.log('Team component mounted');
-    console.log('Placeholder image path:', placeholderImage);
   }, []);
 
-  const teamMembers = [
+  const defaultProfileImage = "https://via.placeholder.com/300x300.png?text=Team+Member";
+  
+  const teamMembers: TeamMember[] = [
     {
+      id: 1,
       name: 'John Smith',
       role: 'Founder & CEO',
-      description: 'With over 15 years of experience in e-waste management, John leads our mission to create a sustainable future.',
-      image: placeholderImage
+      image: defaultProfileImage,
+      bio: 'With over 15 years of experience in e-waste management, John leads our mission to create a sustainable future.'
     },
     {
+      id: 2,
       name: 'Sarah Johnson',
       role: 'Operations Director',
-      description: 'Sarah oversees our recycling operations and ensures the highest standards of environmental compliance.',
-      image: placeholderImage
+      image: defaultProfileImage,
+      bio: 'Sarah oversees our recycling operations and ensures the highest standards of environmental compliance.'
     },
     {
+      id: 3,
       name: 'Michael Chen',
       role: 'Technical Lead',
-      description: 'Michael brings innovative solutions to our e-waste processing methods and leads our R&D initiatives.',
-      image: placeholderImage
+      image: defaultProfileImage,
+      bio: 'Michael brings innovative solutions to our e-waste processing methods and leads our R&D initiatives.'
     },
     {
+      id: 4,
       name: 'Emily Rodriguez',
       role: 'Sustainability Manager',
-      description: 'Emily develops and implements our environmental policies and community outreach programs.',
-      image: placeholderImage
+      image: defaultProfileImage,
+      bio: 'Emily develops and implements our environmental policies and community outreach programs.'
     }
   ];
 
@@ -51,49 +79,20 @@ const Team: React.FC = () => {
       </div>
 
       <div className="team-grid">
-        {teamMembers.map((member, index) => (
-          <div key={index} className="team-card" style={{
-            background: 'rgba(255, 255, 255, 0.05)',
-            backdropFilter: 'blur(10px)',
-            border: '1px solid rgba(145, 94, 255, 0.2)'
-          }}>
+        {teamMembers.map((member) => (
+          <div key={member.id} className="team-member">
             <div className="member-image">
-              <img 
-                src={member.image} 
-                alt={member.name} 
-                style={{ 
-                  width: '100%', 
-                  height: '100%', 
-                  objectFit: 'cover',
-                  borderBottom: '1px solid rgba(145, 94, 255, 0.2)'
-                }} 
-                onError={(e) => {
-                  console.error('Image failed to load:', member.image);
-                  const target = e.target as HTMLImageElement;
-                  target.style.display = 'none';
-                  const placeholder = document.createElement('div');
-                  placeholder.className = 'image-placeholder';
-                  placeholder.textContent = member.name.split(' ').map(n => n[0]).join('');
-                  target.parentElement?.appendChild(placeholder);
-                }}
-              />
+              <MemberImage>
+                <img
+                  src={member.image}
+                  alt={member.name}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+              </MemberImage>
             </div>
-            <div className="member-info">
-              <h3 style={{ color: '#915EFF' }}>{member.name}</h3>
-              <h4 style={{ color: '#e2e2e2' }}>{member.role}</h4>
-              <p style={{ color: '#e2e2e2' }}>{member.description}</p>
-              <div className="social-links">
-                <a href="#" className="social-link" aria-label="LinkedIn" style={{ color: '#915EFF' }}>
-                  <i className="fab fa-linkedin"></i>
-                </a>
-                <a href="#" className="social-link" aria-label="Twitter" style={{ color: '#915EFF' }}>
-                  <i className="fab fa-twitter"></i>
-                </a>
-                <a href="#" className="social-link" aria-label="GitHub" style={{ color: '#915EFF' }}>
-                  <i className="fab fa-github"></i>
-                </a>
-              </div>
-            </div>
+            <h3>{member.name}</h3>
+            <p className="role">{member.role}</p>
+            <p className="bio">{member.bio}</p>
           </div>
         ))}
       </div>

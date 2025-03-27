@@ -31,7 +31,7 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
-const App: React.FC = () => {
+const App = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

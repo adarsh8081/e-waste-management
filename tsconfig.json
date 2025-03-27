@@ -18,28 +18,27 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react",
-    "baseUrl": "./",
+    "jsx": "react-jsx",
+    "baseUrl": "src",
     "paths": {
-      "*": ["src/*", "node_modules/*"]
+      "*": ["*"]
     },
     "typeRoots": [
       "./node_modules/@types",
       "./src/types"
     ],
     "types": [
-      "react",
-      "react-dom",
-      "styled-components",
+      "node",
       "jest",
-      "testing-library__jest-dom",
-      "@testing-library/jest-dom"
-    ]
+      "@testing-library/jest-dom",
+      "styled-components"
+    ],
+    "allowJs": true,
+    "noImplicitAny": false
   },
   "include": [
     "src/**/*",
-    "src/**/*.ts",
-    "src/**/*.tsx"
+    "src/types/styled.d.ts"
   ],
   "exclude": [
     "node_modules",

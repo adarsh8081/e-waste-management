@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, Suspense, FC } from 'react';
 import styled from 'styled-components';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, useGLTF } from '@react-three/drei';
+import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 import {
   Chart as ChartJS,
@@ -27,7 +27,13 @@ import Ewaste3 from '../assets/Ewaste3.jpg';
 import Ewaste4 from '../assets/Ewaste4.png';
 
 // Register ChartJS components
-ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale);
+ChartJS.register(
+  ArcElement,
+  Tooltip,
+  Legend,
+  CategoryScale,
+  LinearScale
+);
 
 // Map constants
 const MAP_CENTER: LatLngTuple = [20, 0];
@@ -218,16 +224,24 @@ const Card = styled(motion.div)`
   }
 `;
 
-const Image = styled(motion.img)`
+const ImageContainer = styled.div`
+  position: relative;
   width: 100%;
   height: 250px;
-  object-fit: cover;
+  overflow: hidden;
   border-radius: 1rem;
-  transform: translateZ(10px);
-  filter: contrast(1.2) brightness(1.1) saturate(1.1);
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  margin: 0;
+  transform-style: preserve-3d;
+  transition: transform 0.6s;
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  &:hover {
+    transform: scale(1.05);
+  }
   
   @media (max-width: 768px) {
     height: 200px;
@@ -518,33 +532,21 @@ const EwasteModel: FC = () => {
   const meshRef = useRef<THREE.Mesh>(null);
 
   useEffect(() => {
-    if (!meshRef.current) return;
-
-    const animate = () => {
-      if (!meshRef.current) return;
-      meshRef.current.rotation.x += 0.01;
-      meshRef.current.rotation.y += 0.01;
-      requestAnimationFrame(animate);
-    };
-
-    animate();
-
-    return () => {
-      if (meshRef.current) {
-        meshRef.current.rotation.x = 0;
-        meshRef.current.rotation.y = 0;
-      }
-    };
+    if (meshRef.current) {
+      const animate = () => {
+        if (meshRef.current) {
+          meshRef.current.rotation.y += 0.01;
+        }
+        requestAnimationFrame(animate);
+      };
+      animate();
+    }
   }, []);
 
   return (
     <mesh ref={meshRef}>
-      <boxGeometry args={[2, 2, 2, 1, 1, 1]} />
-      <meshStandardMaterial
-        color="#00ff87"
-        roughness={0.3}
-        metalness={0.7}
-      />
+      <boxGeometry args={[2, 2, 2]} />
+      <meshStandardMaterial color="#00ff00" />
     </mesh>
   );
 };
@@ -893,12 +895,13 @@ const Solution: React.FC = () => {
                 setUserImpact(prev => prev + 50);
               }}
             >
-              <Image
-                src={solution.image}
-                alt={solution.title}
-                whileHover={{ scale: 1.05, rotateY: 180 }}
-                transition={{ duration: 0.6 }}
-              />
+              <ImageContainer style={{ transform: activeSection === index ? 'rotateY(180deg)' : 'none' }}>
+                <img
+                  src={solution.image}
+                  alt={solution.title}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+              </ImageContainer>
               <CardTitle>{solution.title}</CardTitle>
               <Description>{solution.description}</Description>
               <motion.div
