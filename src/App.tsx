@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
+import { ThemeProvider } from 'styled-components';
+import { theme } from './theme/theme';
 import './App.css';
 import Home from './components/Home';
 import About from './components/About';
@@ -22,19 +24,15 @@ const GlobalStyle = createGlobalStyle`
 
   body {
     overflow-x: hidden;
-  }
-
-  :root {
-    --primary-color: #1a2a6c;
-    --secondary-color: #b21f1f;
-    --accent-color: #fdbb2d;
+    background: ${props => props.theme.colors.background};
+    color: ${props => props.theme.colors.text};
   }
 `;
 
 const App = () => {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = React.useState(true);
 
-  useEffect(() => {
+  React.useEffect(() => {
     // Simulate initial loading
     const timer = setTimeout(() => {
       setLoading(false);
@@ -44,43 +42,45 @@ const App = () => {
   }, []);
 
   return (
-    <BrowserRouter>
+    <ThemeProvider theme={theme}>
       <GlobalStyle />
-      <div className="App">
-        <AnimatePresence mode="wait">
-          {loading ? (
-            <motion.div
-              key="loader"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <Loader />
-            </motion.div>
-          ) : (
-            <motion.div
-              key="content"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5 }}
-            >
-              <Navbar />
-              <main className="main-content">
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/about" element={<About />} />
-                  <Route path="/products" element={<Products />} />
-                  <Route path="/contact" element={<Contact />} />
-                  <Route path="/team" element={<Team />} />
-                  <Route path="/solution" element={<Solution />} />
-                </Routes>
-              </main>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-    </BrowserRouter>
+      <BrowserRouter>
+        <div className="App">
+          <AnimatePresence mode="wait">
+            {loading ? (
+              <motion.div
+                key="loader"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <Loader />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="content"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5 }}
+              >
+                <Navbar />
+                <main className="main-content">
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/about" element={<About />} />
+                    <Route path="/products" element={<Products />} />
+                    <Route path="/contact" element={<Contact />} />
+                    <Route path="/team" element={<Team />} />
+                    <Route path="/solution" element={<Solution />} />
+                  </Routes>
+                </main>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 };
 
