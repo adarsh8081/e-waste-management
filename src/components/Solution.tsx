@@ -500,7 +500,8 @@ const Solution: React.FC = () => {
       description: "Analysis of material recovery rates and technological improvements over time.",
       insight: "Advanced processing methods show 300% improvement in recovery efficiency.",
       solution: "Integration of AI and molecular reconstruction yields optimal recovery rates.",
-      plot: "/plots/recovery_trends.html"
+      plot: "/plots/recovery_trends.html",
+      isHtml: true
     }
   ];
 
@@ -621,10 +622,10 @@ const Solution: React.FC = () => {
               </InsightBox>
               {problem.plot && (
                 <VisualizationContainer>
-                  {problem.plot.endsWith('.html') ? (
-                    <iframe src={problem.plot} title={problem.title} />
+                  {problem.isHtml ? (
+                    <iframe src={problem.plot} title={problem.title} style={{ width: '100%', height: '100%', border: 'none' }} />
                   ) : (
-                    <img src={problem.plot} alt={problem.title} />
+                    <img src={problem.plot} alt={problem.title} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                   )}
                 </VisualizationContainer>
               )}

@@ -1,5 +1,4 @@
 import os
-import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
@@ -93,16 +92,19 @@ def create_recovery_trends_plot():
     return fig
 
 if __name__ == "__main__":
-    # Get the absolute path to the public/plots directory
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    project_root = os.path.dirname(os.path.dirname(current_dir))
-    plots_dir = os.path.join(project_root, "public", "plots")
-    
-    # Create the plots directory if it doesn't exist
-    os.makedirs(plots_dir, exist_ok=True)
-    
-    # Generate and save the plot
-    fig = create_recovery_trends_plot()
-    output_path = os.path.join(plots_dir, "recovery_trends.html")
-    fig.write_html(output_path)
-    print(f"Plot saved to: {output_path}") 
+    try:
+        # Get the absolute path to the public/plots directory
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        project_root = os.path.dirname(os.path.dirname(current_dir))
+        plots_dir = os.path.join(project_root, "public", "plots")
+        
+        # Create the plots directory if it doesn't exist
+        os.makedirs(plots_dir, exist_ok=True)
+        
+        # Generate and save the plot
+        fig = create_recovery_trends_plot()
+        output_path = os.path.join(plots_dir, "recovery_trends.html")
+        fig.write_html(output_path)
+        print(f"Plot saved successfully to: {output_path}")
+    except Exception as e:
+        print(f"Error generating plot: {str(e)}") 
